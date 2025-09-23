@@ -5,15 +5,12 @@ from collections import defaultdict
 from ultralytics import YOLO
 
 # Parameters
-video_path = r"C:\Users\Admin\Desktop\Ali\12K.mp4"
+video_path = "12K.mp4"
 frame_limit = 10 #100000
 distance_thresh = 3
 max_lost = 6        # How many frames to keep a missing object
 min_lifetime = 6    # Minimum frames a droplet must exist before drawing
 resize_factor = 0.5  # 🔹 Resize video window (0.5 = half size)
-# Load the YOLO11 model
-model = YOLO("yolo11x.pt")
-
 
 # Tracking storage
 next_id = 0
@@ -67,15 +64,6 @@ while cap.isOpened() and frame_index < frame_limit:
                 detected.append((center, radius))
                 all_radii.append(radius)  # Store for size distribution
 
-    # Run YOLO11 tracking on the frame, persisting tracks between frames
-    results = model.track(frame, persist=True)
-
-    # Visualize the results on the frame
-    annotated_frame = results[0].plot()
-
-    # Display the annotated frame
-    cv2.imshow("YOLO11 Tracking", annotated_frame)
-
     # updated_ids = set()
     # for det in detected:
     #     center = det[0]
@@ -118,11 +106,6 @@ while cap.isOpened() and frame_index < frame_limit:
     output_filename = f"frame_{frame_index}.jpg"
     cv2.imwrite(output_filename, output)
     print(f"Saved: {output_filename}")
-
-    # Save the YOLO-annotated frame
-    yolo_output_filename = f"yolo_frame_{frame_index}.jpg"
-    cv2.imwrite(yolo_output_filename, annotated_frame)
-    print(f"Saved YOLO output: {yolo_output_filename}")
 
     # Resize and display
     output_resized = cv2.resize(output, None, fx=resize_factor, fy=resize_factor)
