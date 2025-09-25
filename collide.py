@@ -58,11 +58,16 @@ while cap.isOpened() and frame_index < frame_limit:
         if 20 < area < 250 and perimeter > 0:
             circularity = 4 * np.pi * (area / (perimeter * perimeter))
             if 0.4 < circularity <= 1.0:  # Circularity close to 1 indicates a circle
-                filtered_contours.append(cnt)
-                (x, y), radius = cv2.minEnclosingCircle(cnt)
-                center = (int(x), int(y))
-                detected.append((center, radius))
-                all_radii.append(radius)  # Store for size distribution
+                x, y, w, h = cv2.boundingRect(cnt)
+                aspect_ratio = w / float(h)
+                if not (0.7 < aspect_ratio < 1.3) :
+                    extent = area / float(w * h)
+                    if not (0.2 < extent < 0.9):
+                        filtered_contours.append(cnt)
+                        (x, y), radius = cv2.minEnclosingCircle(cnt)
+                        center = (int(x), int(y))
+                        detected.append((center, radius))
+                        all_radii.append(radius)  # Store for size distribution
 
     # updated_ids = set()
     # for det in detected:
